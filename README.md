@@ -1,92 +1,48 @@
 # dump_unifi_protect_video
 
+Quick and dirty perl wrapper I wrote to walk the drive from a UniFi-Protect install and convert all the (non-timelapse) ubv files into mp4 files, saved in a Year/Month/Day/Camera directory structure
 
+## Requirements
+* You must have the remux command (and it's requirements) installed and in your $PATH, see: https://github.com/petergeneric/unifi-protect-remux
+* Note that I found the ubnt_ubvinfo binary from my UDM-PRO by:
+    * ssh into the udm-pro
+    * run: unifi-os shell
+    * scp /usr/share/unifi-protect/app/node_modules/.bin/ubnt_ubvinfo $another_host:/tmp
 
-## Getting started
+## Info on run and examples
+I converted all the files from my ~7T disk out of my UDM-PRO (moved to a UNVR) in just under 30 hours.
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
-
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
-
-## Add your files
-
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
-
+I ran it as:
 ```
-cd existing_repo
-git remote add origin http://gitlab.miguelito.org/mmarion/dump_unifi_protect_video.git
-git branch -M main
-git push -uf origin main
+~/dump_unifi_protect_video/dump_unifi_protect.pl --verbose --debug --cameras ~/unifi-protect-udmpro-backup/cameras.json --input /mnt/ubnt-protect-in/unifi-os/unifi-protect/video --output /mnt/ubnt-protect-out
 ```
 
-## Integrate with your tools
+Sample end of the output from the script:
+```
+run_cmd: remux -with-audio /mnt/ubnt-protect-in/unifi-os/unifi-protect/video/2022/04/02/FCECDA30AF6E_0_rotating_1648928108633.ubv
+Move FCECDA30AF6E_0_rotating_2022-04-02T12.34.58-07.00.mp4, /mnt/ubnt-protect-out/video/2022/04/02/Interior DomeCam/12.34.58-07.00.mp4
+run_cmd: remux -with-audio /mnt/ubnt-protect-in/unifi-os/unifi-protect/video/2022/04/02/FCECDA30AF6E_2_rotating_1648893457622.ubv
+Move FCECDA30AF6E_2_rotating_2022-04-02T02.57.31-07.00.mp4, /mnt/ubnt-protect-out/video/2022/04/02/Interior DomeCam/02.57.31-07.00.mp4
+run_cmd: remux -with-audio /mnt/ubnt-protect-in/unifi-os/unifi-protect/video/2022/04/02/FCECDA30AF6E_2_rotating_1648918724648.ubv
+Move FCECDA30AF6E_2_rotating_2022-04-02T09.58.33-07.00.mp4, /mnt/ubnt-protect-out/video/2022/04/02/Interior DomeCam/09.58.33-07.00.mp4
 
-- [ ] [Set up project integrations](http://gitlab.miguelito.org/mmarion/dump_unifi_protect_video/-/settings/integrations)
+Source ubv files processed:     6855
+Destination mp4 files created:  7906
+Time:                           106820 seconds
+```
 
-## Collaborate with your team
+Example of my input directory structure (disk mounted on /mnt/ubnt-protect-in):
+```
+/mnt/ubnt-protect-in/unifi-os/unifi-protect/video/2022/01/13/E063DA3FEC8C_0_rotating_1642139195172.ubv
+/mnt/ubnt-protect-in/unifi-os/unifi-protect/video/2022/01/13/E063DA3FEC8C_0_rotating_1642145593157.ubv
+/mnt/ubnt-protect-in/unifi-os/unifi-protect/video/2021/06/01/FCECDA8FAD1D_2_rotating_1622569548072.ubv
+/mnt/ubnt-protect-in/unifi-os/unifi-protect/video/2021/11/28/FCECDA8FAD1D_0_rotating_1638130012796.ubv
+```
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Automatically merge when pipeline succeeds](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
-
-## Test and Deploy
-
-Use the built-in continuous integration in GitLab.
-
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
-
-***
-
-# Editing this README
-
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!).  Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+Example of the output directory structure (disk mounted on /mnt/ubnt-protect-out):
+```
+/mnt/ubnt-protect-out/video/2022/04/02/UVC G4 Pro - front driveway/02.15.37-07.00.mp4
+/mnt/ubnt-protect-out/video/2022/04/02/UVC G4 Pro - front driveway/08.31.32-07.00.mp4
+/mnt/ubnt-protect-out/video/2022/04/02/Interior DomeCam/00.30.17-07.00.mp4
+/mnt/ubnt-protect-out/video/2022/04/02/Interior DomeCam/03.31.26-07.00.mp4
+```
